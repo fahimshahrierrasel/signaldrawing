@@ -14,7 +14,7 @@ let dataStream = "01001110";
 
 // Canvas Info
 var unipolar_signal = function (p) {
-    
+
     p.setup = function () {
         p.createCanvas(canvasLength, canvasWidth);
         p.background(227, 242, 253);
@@ -30,28 +30,28 @@ var unipolar_signal = function (p) {
         // Axis
         p.stroke(0, 0, 0);
         p.strokeWeight(2);
-        p.line(50, midY, canvasLength-50, midY);
-        p.line(midX, 10, midX, canvasWidth-10);
+        p.line(50, midY, canvasLength - 50, midY);
+        p.line(midX, 10, midX, canvasWidth - 10);
 
         // Draw Data On Canvas
         p.strokeWeight(1);
         for (var x = 50; x <= ((dataStream.length + 2) * width); x += width) {
             p.line(x, midY + 150, x, midY - 150);
         }
-        
+
         p.stroke(0, 0, 255);
         let j = 0;
         for (var x = 50; x <= ((dataStream.length + 1) * width); x += width) {
             p.text(dataStream[j], x + 10, 50);
             j++;
         }
-        
+
         // unipolar_signal Draw
         p.beginShape();
         p.stroke(255, 0, 0);
         p.strokeWeight(4);
         p.fill(0, 0, 0, 0, 1);
-        
+
         let uni_start = 50;
         let uni_upper = 120;
         let uni_lower = 180;
@@ -63,13 +63,11 @@ var unipolar_signal = function (p) {
         uni_next = uni_start + 30;
 
         for (let x = 0; x < dataStream.length; x++) {
-            if (dataStream[x] === '1') 
-            {
+            if (dataStream[x] === '1') {
                 p.vertex(uni_next, uni_upper);
                 if (dataStream[x] != dataStream[x + 1] && (x < dataStream.length - 1))
                     p.vertex(uni_next, uni_lower);
-            } else 
-            {
+            } else {
                 p.vertex(uni_next, uni_lower);
                 if (dataStream[x] != dataStream[x + 1] && (x < dataStream.length - 1))
                     p.vertex(uni_next, uni_upper);
@@ -81,7 +79,7 @@ var unipolar_signal = function (p) {
 }
 
 var nrzl_signal = function (p) {
-    
+
     p.setup = function () {
         p.createCanvas(canvasLength, canvasWidth);
         p.background(227, 242, 253);
@@ -97,28 +95,28 @@ var nrzl_signal = function (p) {
         // Axis
         p.stroke(0, 0, 0);
         p.strokeWeight(2);
-        p.line(50, midY, canvasLength-50, midY);
-        p.line(midX, 10, midX, canvasWidth-10);
+        p.line(50, midY, canvasLength - 50, midY);
+        p.line(midX, 10, midX, canvasWidth - 10);
 
         // Draw Data On Canvas
         p.strokeWeight(1);
         for (var x = 50; x <= ((dataStream.length + 2) * width); x += width) {
             p.line(x, midY + 150, x, midY - 150);
         }
-        
+
         p.stroke(0, 0, 255);
         let j = 0;
         for (var x = 50; x <= ((dataStream.length + 1) * width); x += width) {
             p.text(dataStream[j], x + 10, 50);
             j++;
         }
-        
+
         // unipolar_signal Draw
         p.beginShape();
         p.stroke(255, 0, 0);
         p.strokeWeight(4);
         p.fill(0, 0, 0, 0, 1);
-        
+
         let uni_start = 50;
         let uni_upper = 120;
         let uni_lower = 180;
@@ -130,13 +128,11 @@ var nrzl_signal = function (p) {
         uni_next = uni_start + 30;
 
         for (let x = 0; x < dataStream.length; x++) {
-            if (dataStream[x] === '0') 
-            {
+            if (dataStream[x] === '0') {
                 p.vertex(uni_next, uni_upper);
                 if (dataStream[x] != dataStream[x + 1] && (x < dataStream.length - 1))
                     p.vertex(uni_next, uni_lower);
-            } else 
-            {
+            } else {
                 p.vertex(uni_next, uni_lower);
                 if (dataStream[x] != dataStream[x + 1] && (x < dataStream.length - 1))
                     p.vertex(uni_next, uni_upper);
@@ -147,15 +143,97 @@ var nrzl_signal = function (p) {
     }
 }
 
+var nrzi_signal = function (p) {
+
+    p.setup = function () {
+        p.createCanvas(canvasLength, canvasWidth);
+        p.background(227, 242, 253);
+    }
+
+    p.draw = function () {
+        // O & 1 Lebels
+        p.strokeWeight(0);
+        p.text("1", 20, 120);
+        p.strokeWeight(0);
+        p.text("0", 20, 180);
+
+        // Axis
+        p.stroke(0, 0, 0);
+        p.strokeWeight(2);
+        p.line(50, midY, canvasLength - 50, midY);
+        p.line(midX, 10, midX, canvasWidth - 10);
+
+        // Draw Data On Canvas
+        p.strokeWeight(1);
+        for (var x = 50; x <= ((dataStream.length + 2) * width); x += width) {
+            p.line(x, midY + 150, x, midY - 150);
+        }
+
+        p.stroke(0, 0, 255);
+        let j = 0;
+        for (var x = 50; x <= ((dataStream.length + 1) * width); x += width) {
+            p.text(dataStream[j], x + 10, 50);
+            j++;
+        }
+
+        // unipolar_signal Draw
+        p.beginShape();
+        p.stroke(255, 0, 0);
+        p.strokeWeight(4);
+        p.fill(0, 0, 0, 0, 1);
+
+        let uni_start = 50;
+        let uni_upper = 120;
+        let uni_lower = 180;
+        let uni_next;
+
+        p.vertex(uni_start, uni_lower);
+
+        uni_next = uni_start;
+
+        let lower = true;
+
+        for (let x = 0; x < dataStream.length; x++) {
+            if (dataStream[x] === '1') {
+                if (lower) {
+                    p.vertex(uni_next, uni_upper);
+                    uni_next += 30;
+                    p.vertex(uni_next, uni_upper);
+                    lower = false;
+                } else {
+                    p.vertex(uni_next, uni_lower);
+                    uni_next += 30;
+                    p.vertex(uni_next, uni_lower);
+                    lower = true;
+                }
+            } else {
+                if (lower) {
+                    p.vertex(uni_next, uni_lower);
+                    uni_next += 30;
+                    p.vertex(uni_next, uni_lower);
+                } else {
+                    p.vertex(uni_next, uni_upper);
+                    uni_next += 30;
+                    p.vertex(uni_next, uni_upper);
+                }
+
+            }
+        }
+        p.endShape();
+    }
+}
+
 
 new p5(unipolar_signal, 'canvas1');
 new p5(nrzl_signal, 'canvas2');
+new p5(nrzi_signal, 'canvas3');
 
 let generateBtn = document.getElementById("submit");
 let dataInput = document.getElementById("data_stream");
 let dataText = document.getElementById("data_text");
 let canvas1 = document.getElementById("canvas1");
 let canvas2 = document.getElementById("canvas2");
+let canvas3 = document.getElementById("canvas3");
 
 // Generate Button Click Handler
 generateBtn.addEventListener("click", function () {
@@ -164,8 +242,10 @@ generateBtn.addEventListener("click", function () {
         dataText.innerHTML = "Your Data Stream: " + dataStream;
         canvas1.innerHTML = "";
         canvas2.innerHTML = "";
+        canvas3.innerHTML = "";
         new p5(unipolar_signal, 'canvas1');
         new p5(nrzl_signal, 'canvas2');
+        new p5(nrzi_signal, 'canvas3');
     } else {
         alert("Data Stream is empty");
     }
