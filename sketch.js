@@ -223,10 +223,107 @@ var nrzi_signal = function (p) {
     }
 }
 
+var manchester_signal = function (p) {
+
+    p.setup = function () {
+        p.createCanvas(canvasLength, canvasWidth);
+        p.background(227, 242, 253);
+    }
+
+    p.draw = function () {
+        // O & 1 Lebels
+        p.strokeWeight(0);
+        p.text("1", 20, 120);
+        p.strokeWeight(0);
+        p.text("0", 20, 180);
+
+        // Axis
+        p.stroke(0, 0, 0);
+        p.strokeWeight(2);
+        p.line(50, midY, canvasLength - 50, midY);
+        p.line(midX, 10, midX, canvasWidth - 10);
+
+        // Draw Data On Canvas
+        p.strokeWeight(1);
+        for (var x = 50; x <= ((dataStream.length + 2) * width); x += width) {
+            p.line(x, midY + 150, x, midY - 150);
+        }
+
+        p.stroke(0, 0, 255);
+        let j = 0;
+        for (var x = 50; x <= ((dataStream.length + 1) * width); x += width) {
+            p.text(dataStream[j], x + 10, 50);
+            j++;
+        }
+
+        // unipolar_signal Draw
+        p.beginShape();
+        p.stroke(255, 0, 0);
+        p.strokeWeight(4);
+        p.fill(0, 0, 0, 0, 1);
+
+        let uni_start = 50;
+        let uni_upper = 120;
+        let uni_lower = 180;
+        let uni_next;
+        let lower = true;
+
+        if(dataStream[0] === '1'){
+            p.vertex(uni_start, uni_lower);
+            lower = true;
+        }else{
+            p.vertex(uni_start, uni_upper);
+            lower = false;
+        }
+
+        uni_next = uni_start;
+
+        for (let x = 0; x < dataStream.length; x++) {
+            if (dataStream[x] === '1') {
+                if (lower) {
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_lower);
+                    p.vertex(uni_next, uni_upper);
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_upper);
+                    lower = false;
+                } else {
+                    p.vertex(uni_next, uni_lower);
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_lower);
+                    p.vertex(uni_next, uni_upper);
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_upper);
+                    lower = false;
+                }
+            } else {
+                if (lower) {
+                    p.vertex(uni_next, uni_upper);
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_upper);
+                    p.vertex(uni_next, uni_lower);
+                    uni_next += 15
+                    p.vertex(uni_next, uni_lower);
+                    lower = true;
+                } else {
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_upper);
+                    p.vertex(uni_next, uni_lower);
+                    uni_next += 15;
+                    p.vertex(uni_next, uni_lower);
+                    lower = true;
+                }
+            }
+        }
+        p.endShape();
+    }
+}
+
 
 new p5(unipolar_signal, 'canvas1');
 new p5(nrzl_signal, 'canvas2');
 new p5(nrzi_signal, 'canvas3');
+new p5(manchester_signal, 'canvas4');
 
 let generateBtn = document.getElementById("submit");
 let dataInput = document.getElementById("data_stream");
@@ -234,6 +331,7 @@ let dataText = document.getElementById("data_text");
 let canvas1 = document.getElementById("canvas1");
 let canvas2 = document.getElementById("canvas2");
 let canvas3 = document.getElementById("canvas3");
+let canvas4 = document.getElementById("canvas4");
 
 // Generate Button Click Handler
 generateBtn.addEventListener("click", function () {
@@ -243,9 +341,11 @@ generateBtn.addEventListener("click", function () {
         canvas1.innerHTML = "";
         canvas2.innerHTML = "";
         canvas3.innerHTML = "";
+        canvas4.innerHTML = "";
         new p5(unipolar_signal, 'canvas1');
         new p5(nrzl_signal, 'canvas2');
         new p5(nrzi_signal, 'canvas3');
+        new p5(manchester_signal, 'canvas4');
     } else {
         alert("Data Stream is empty");
     }
